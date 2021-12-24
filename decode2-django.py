@@ -4,7 +4,7 @@ import codecs
 import datetime
 import locale
 import json
-import builtins as builtins
+import builtins
 from decimal import Decimal
 from urllib.parse import quote
 from django.utils.http import cookie_date as cookie
