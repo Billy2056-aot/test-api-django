@@ -4,7 +4,7 @@ import codecs
 import datetime
 import locale
 import json
-import builtins as builtins 
+import builtins as builtins
 from decimal import Decimal
 from urllib.parse import quote
 from django.utils.http import cookie_date as cookie
@@ -40,7 +40,6 @@ def User(request):
             return HttpResponse("Please enable cookies and try again.")
     request.session.set_test_cookie()
     return render(request, 'foo/login_form.html')
-
 
 
 class DjangoUnicodeDecodeError(UnicodeDecodeError):
