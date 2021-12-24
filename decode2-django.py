@@ -1,10 +1,10 @@
 
-
+import ssl
 import codecs
 import datetime
 import locale
 import json
-import builtins as builtins #
+import builtins as builtins 
 from decimal import Decimal
 from urllib.parse import quote
 from django.utils.http import cookie_date as cookie
@@ -17,14 +17,19 @@ from django.utils.functional import Promise
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
-from requests.packages.urllib3.poolmanager import PoolManager
+from urllib3.poolmanager import PoolManager
 from status_codes import codes
 from status_codes import _codes
 from compat import json as complexjson
 from urllib3.util import parse_url
 from django.urls import reverse_lazy
 
-
+from urllib3 import PoolManager
+from urllib3.util.ssl_ import create_urllib3_context
+ctx = create_urllib3_context()
+ctx.options |= ssl.OP_ENABLE_MIDDLEBOX_COMPAT
+with PoolManager(ssl_context=ctx) as pool:
+    pool.request("GET", "https://www.google.com/")
 
 def User(request):
     if request.method == 'POST':
