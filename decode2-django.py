@@ -12,7 +12,7 @@ from django.utils.html import json_script as _json_script
 from django.http.multipartparser import LazyStream
 from django.contrib.auth.hashers import get_hasher,BCryptSHA256PasswordHasher,BCryptPasswordHasher,mask_hash
 from django.contrib.auth.tokens import default_token_generator
-
+from django.contrib.auth.models import User
 from django.utils.functional import Promise
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -23,6 +23,16 @@ from status_codes import _codes
 from compat import json as complexjson
 from urllib3.util import parse_url
 
+
+def User(request):
+    if request.method == 'POST':
+        if request.session.test_cookie_worked():
+            request.session.delete_test_cookie()
+            return HttpResponse("You're logged in.")
+        else:
+            return HttpResponse("Please enable cookies and try again.")
+    request.session.set_test_cookie()
+    return render(request, 'foo/login_form.html')
 
 class DjangoUnicodeDecodeError(UnicodeDecodeError):
     def __init__(self, obj, *args):
