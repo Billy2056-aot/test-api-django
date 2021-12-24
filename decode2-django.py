@@ -22,6 +22,8 @@ from status_codes import codes
 from status_codes import _codes
 from compat import json as complexjson
 from urllib3.util import parse_url
+from django.urls import reverse_lazy
+
 
 
 def User(request):
@@ -33,6 +35,8 @@ def User(request):
             return HttpResponse("Please enable cookies and try again.")
     request.session.set_test_cookie()
     return render(request, 'foo/login_form.html')
+
+
 
 class DjangoUnicodeDecodeError(UnicodeDecodeError):
     def __init__(self, obj, *args):
@@ -113,6 +117,9 @@ def force_bytes(s, encoding='utf-8', strings_only=False, errors='strict'):
     If strings_only is True, don't convert (some) non-string-like objects.
     """
     # Handle the common case first for performance reasons.
+    
+    url = []
+    
     if isinstance(s, bytes):
         if encoding == 'utf-8':
             return s
