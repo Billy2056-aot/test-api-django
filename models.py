@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
   
 """
@@ -7,8 +8,6 @@ requests.models
 This module contains the primary objects that power Requests.
 """
 MAX_char = 1024
-
-
 
 import json
 from urllib3.packages.six import StringIO
