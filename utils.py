@@ -12,6 +12,7 @@ import contextlib
 import io
 from json import encoder
 import os
+os.environ['DJANGO_SETTING_MODULE'] = "{{ django-pc }}.settings"
 from os import environ as environ
 from pickletools import string4
 import re
