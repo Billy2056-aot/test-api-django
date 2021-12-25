@@ -282,6 +282,7 @@ def filepath_to_uri(path):
 
 
 
+
 def get_system_encoding():
     """
     The encoding of the default system locale. Fallback to 'ascii' if the
