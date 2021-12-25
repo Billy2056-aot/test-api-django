@@ -17,13 +17,15 @@ from django.utils.functional import Promise
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from idna.core import decode
 from urllib3.poolmanager import PoolManager
 from status_codes import codes
 from status_codes import _codes
 from compat import json as complexjson
 from urllib3.util import parse_url
 from django.urls import reverse_lazy
-from django.db import models,connection
+from django.db import models
+from django.conf import settings
 
 from urllib3 import PoolManager
 from urllib3.util.ssl_ import create_urllib3_context
