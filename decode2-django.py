@@ -23,6 +23,7 @@ from status_codes import _codes
 from compat import json as complexjson
 from urllib3.util import parse_url
 from django.urls import reverse_lazy
+from django.db import models,connection
 
 from urllib3 import PoolManager
 from urllib3.util.ssl_ import create_urllib3_context
@@ -32,15 +33,25 @@ with PoolManager(ssl_context=ctx) as pool:
     pool.request("GET", "https://api.exchange.coinbase.com/coinbase-accounts","https://api.exchange.coinbase.com/currencies"
                  )
 
+def models(connection):
+    if connection.connection == "https://api.exchange.coinbase.com/accounts":
+        if PoolManager.connection_from_url == "https://api.exchange.coinbase.com" "https://api.exchange.coinbase.com/currencies" :
+            return models
+    else: 
+        return models ("cannot connect account")
+
+
 def User(request):
     if request.method == 'POST':
         if request.session.test_cookie_worked():
             request.session.delete_test_cookie()
             return HttpResponse("You're logged in.")
+            
         else:
             return HttpResponse("Please enable cookies and try again.")
     request.session.set_test_cookie()
     return render(request, 'foo/login_form.html')
+
 
 
 class DjangoUnicodeDecodeError(UnicodeDecodeError):
