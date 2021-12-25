@@ -12,15 +12,15 @@ from django.utils.html import json_script as _json_script
 from django.http.multipartparser import LazyStream
 from django.contrib.auth.hashers import get_hasher,BCryptSHA256PasswordHasher,BCryptPasswordHasher,mask_hash
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils.functional import Promise
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
 from idna.core import decode
 from urllib3.poolmanager import PoolManager
-from status_codes import codes
-from status_codes import _codes
+# from status_codes import codes
+# from status_codes import _codes
 from compat import json as complexjson
 from urllib3.util import parse_url
 from django.urls import reverse_lazy
