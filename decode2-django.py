@@ -21,7 +21,7 @@ from idna.core import decode
 from urllib3.poolmanager import PoolManager
 # from status_codes import codes
 # from status_codes import _codes
-from compat import json as complexjson
+
 from urllib3.util import parse_url
 from django.urls import reverse_lazy
 from django.db import models
