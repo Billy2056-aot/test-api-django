@@ -6,7 +6,7 @@ import time
 from unicodedata import decimal
 from xml.etree.ElementPath import _T
 
-def RequestTimefromNtp(addr='0.de.pool.ntp.org'):
+def RequestTimefromNtp(addr='clock.nectec.or.th'):
     REF_TIME_1970 = 2208988800  # Reference time
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     data = b'\x1b' + 47 * b'\0'
@@ -20,4 +20,4 @@ def RequestTimefromNtp(addr='0.de.pool.ntp.org'):
     return time.time(t), t
 
 if __name__ == "__main__": 
-    print(RequestTimefromNtp())
+    print(RequestTimefromNtp(time))

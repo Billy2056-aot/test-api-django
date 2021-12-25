@@ -29,7 +29,8 @@ from urllib3.util.ssl_ import create_urllib3_context
 ctx = create_urllib3_context()
 ctx.options |= ssl.OP_ENABLE_MIDDLEBOX_COMPAT
 with PoolManager(ssl_context=ctx) as pool:
-    pool.request("GET", "https://api.exchange.coinbase.com/coinbase-accounts")
+    pool.request("GET", "https://api.exchange.coinbase.com/coinbase-accounts","https://api.exchange.coinbase.com/currencies"
+                 , )
 
 def User(request):
     if request.method == 'POST':
