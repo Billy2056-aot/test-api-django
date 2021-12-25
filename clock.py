@@ -4,13 +4,13 @@ import socket
 import struct
 import time
 from unicodedata import decimal
-from xml.etree.ElementPath import _T
+# from xml.etree.ElementPath import _T
 
 def RequestTimefromNtp(addr='clock.nectec.or.th'):
     REF_TIME_1970 = 2208988800  # Reference time
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     data = b'\x1b' + 47 * b'\0'
-    client.sendto(data, (addr, 123))
+    client.sendto(data, (addr, +7))
     data, address = client.recvfrom(1024)
     t = int
     if data:
@@ -19,5 +19,3 @@ def RequestTimefromNtp(addr='clock.nectec.or.th'):
         t -= REF_TIME_1970
     return time.time(t), t
 
-if __name__ == "__main__": 
-    print(RequestTimefromNtp(time))

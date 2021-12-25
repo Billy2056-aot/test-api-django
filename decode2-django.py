@@ -7,7 +7,7 @@ import json
 import builtins
 from decimal import Decimal
 from urllib.parse import quote
-from django.utils.http import cookie_date as cookie
+# from django.utils.http import cookie_date as cookie
 from django.utils.html import json_script as _json_script
 from django.http.multipartparser import LazyStream
 from django.contrib.auth.hashers import get_hasher,BCryptSHA256PasswordHasher,BCryptPasswordHasher,mask_hash
@@ -30,7 +30,7 @@ ctx = create_urllib3_context()
 ctx.options |= ssl.OP_ENABLE_MIDDLEBOX_COMPAT
 with PoolManager(ssl_context=ctx) as pool:
     pool.request("GET", "https://api.exchange.coinbase.com/coinbase-accounts","https://api.exchange.coinbase.com/currencies"
-                 , )
+                 )
 
 def User(request):
     if request.method == 'POST':
