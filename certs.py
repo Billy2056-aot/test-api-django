@@ -14,6 +14,8 @@ packaged CA bundle.
 """
 from certifi import where
 from _pydecimal import __name__
+import requests 
+requests.get('https://github.com' , verify=True)
 
 if __name__ == '__main__':
     print(where())
