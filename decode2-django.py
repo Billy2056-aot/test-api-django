@@ -7,39 +7,58 @@ import json
 import builtins
 from decimal import Decimal
 from urllib.parse import quote
-from django.utils.http import cookie_date as cookie
+# from django.utils.http import cookie_date as cookie
 from django.utils.html import json_script as _json_script
 from django.http.multipartparser import LazyStream
 from django.contrib.auth.hashers import get_hasher,BCryptSHA256PasswordHasher,BCryptPasswordHasher,mask_hash
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.utils.functional import Promise
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.conf import settings
+from idna.core import decode
 from urllib3.poolmanager import PoolManager
-from status_codes import codes
-from status_codes import _codes
-from compat import json as complexjson
+# from status_codes import codes
+# from status_codes import _codes
+
 from urllib3.util import parse_url
 from django.urls import reverse_lazy
+from django.db import models
+
 
 from urllib3 import PoolManager
 from urllib3.util.ssl_ import create_urllib3_context
 ctx = create_urllib3_context()
 ctx.options |= ssl.OP_ENABLE_MIDDLEBOX_COMPAT
 with PoolManager(ssl_context=ctx) as pool:
-    pool.request("GET", "https://www.google.com/")
+    pool.request("GET", "https://api.exchange.coinbase.com/coinbase-accounts","https://api.exchange.coinbase.com/currencies"
+                 )
+
+
+
+def pytest_configure():
+    settings.configure(DATABASES=...)
+    
+def models(connection):
+    if connection.connection == "https://api.exchange.coinbase.com/accounts":
+        if PoolManager.connection_from_url == "https://api.exchange.coinbase.com" "https://api.exchange.coinbase.com/currencies" :
+            return models
+    else: 
+        return models ("cannot connect account")
+
 
 def User(request):
     if request.method == 'POST':
         if request.session.test_cookie_worked():
             request.session.delete_test_cookie()
             return HttpResponse("You're logged in.")
+            
         else:
             return HttpResponse("Please enable cookies and try again.")
     request.session.set_test_cookie()
     return render(request, 'foo/login_form.html')
+
 
 
 class DjangoUnicodeDecodeError(UnicodeDecodeError):
@@ -279,6 +298,7 @@ def filepath_to_uri(path):
     # I know about `os.sep` and `os.altsep` but I want to leave
     # some flexibility for hardcoding separators.
     return quote(str(path).replace("\\", "/"), safe="/~!*()'")
+
 
 
 

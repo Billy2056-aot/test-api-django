@@ -6,17 +6,17 @@ This module provides utility functions that are used within Requests
 that are also useful for external consumption.
 """
 from decimal import Decimal
-from . import certs
+import certs
 import codecs
 import contextlib
 import io
 from json import encoder
 import os
+os.environ['DJANGO_SETTING_MODULE'] = "{{ django-pc }}.settings"
 from os import environ as environ
 from pickletools import string4
 import re
 import socket
-from ssl import _PasswordType
 import struct
 import sys
 import tempfile

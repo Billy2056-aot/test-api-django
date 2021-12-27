@@ -1,29 +1,20 @@
 {
   "version": "0.2.0",
   "configurations": [
-    
-    
-    
-    
 
-    
-    
-    
-    
-
-    // {
-    //   "name": "Python C++ Debugger",
-    //   "type": "pythoncpp",
-    //   "request": "launch",
-    //   "pythonConfig": "default",
-      
-    // },
     {
       "name": "Python: Remote Attach",
       "type": "python",
       "request": "attach",
-      "connect": { "host": "localhost", "port": 443 },
-      "pathMappings": [{ "localRoot": "${workspaceFolder}", "remoteRoot": "." }]
+      "connect": {
+        "host": "localhost",
+        "port": 443
+      },
+      "pathMappings": [        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "."
+        }
+      ]
     },
     {
       "type": "sldb",
@@ -182,7 +173,11 @@
       "request": "launch",
       "program": "${workspaceFolder}/manage.py",
       "console": "integratedTerminal",
-      "args": ["runserver", "--noreload", "--nothreading"],
+      "args": [
+        "runserver",
+        "--noreload",
+        "--nothreading"
+      ],
       "django": true
     },
     {
@@ -254,7 +249,11 @@
       "env": {
         "FLASK_APP": "app.py"
       },
-      "args": ["run", "--no-debugger", "--no-reload"],
+      "args": [
+        "run",
+        "--no-debugger",
+        "--no-reload"
+      ],
       "jinja": true
     },
     {
@@ -263,8 +262,6 @@
       "request": "launch",
       "program": "${file}",
       "console": "externalTerminal"
-    },
-    
-
+    }
   ]
 }
