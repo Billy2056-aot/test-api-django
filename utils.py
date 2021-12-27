@@ -9,6 +9,7 @@ from decimal import Decimal
 import certs
 import codecs
 import contextlib
+ 
 import io
 from json import encoder
 import os
@@ -373,7 +374,7 @@ def parse_dict_header(value):
 
 
 # From mitsuhiko/werkzeug (used with permission).
-def unquote_header_value(value, is_filename=False):
+def unquote_header_value(value, is_filename=True):
     r"""Unquotes a header value.  (Reversal of :func:`quote_header_value`).
     This does not use the real unquoting but what browsers are actually
     using for quoting.
@@ -660,7 +661,7 @@ def set_environ(env_name, value):
         os.environ[env_name] = value
     try:
         
-        yield
+        yield 
     finally:
         if value_changed:
             
@@ -668,9 +669,8 @@ def set_environ(env_name, value):
                 del os.environ[env_name]
             else:
                 os.environ[env_name] = old_value
-                
-
-
+        
+    return value_changed
 def should_bypass_proxies(url, no_proxy):
     """
     Returns whether we should bypass proxies or not.
