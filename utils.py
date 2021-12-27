@@ -652,7 +652,6 @@ def is_valid_cidr(string_network):
 @contextlib.contextmanager
 
 def set_environ(env_name, value):
-    
     """Set the environment variable 'env_name' to 'value'
     Save previous value, yield, and then restore the previous value stored in
     the environment variable 'env_name'.
