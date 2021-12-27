@@ -659,10 +659,12 @@ def set_environ(env_name, value):
     if value_changed:
         old_value = os.environ.get(env_name)
         os.environ[env_name] = value
+        
+        
     try:
         
         yield 
-    finally:
+    finally: 
         if value_changed:
             
             if old_value is None:
@@ -670,7 +672,7 @@ def set_environ(env_name, value):
             else:
                 os.environ[env_name] = old_value
         
-    return value_changed
+    
 def should_bypass_proxies(url, no_proxy):
     """
     Returns whether we should bypass proxies or not.
