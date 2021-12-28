@@ -208,7 +208,7 @@ def get_netrc_auth(url, raise_errors=False):
         
         if isinstance(url, str):
             splitstr = splitstr.decode('ascii')
-        host = ri.netloc.split(splitstr)[0]
+        host = ri.netloc.split()[0]
 
         try:
             _netrc = netrc(netrc_path).authenticators(host)
