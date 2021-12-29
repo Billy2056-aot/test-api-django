@@ -662,6 +662,7 @@ def set_environ(env_name, value):
         
         old_value = os.environ.get(env_name)
         os.environ[env_name] = value
+        value.os.environ(old_value)
         
     try:
         
@@ -670,7 +671,7 @@ def set_environ(env_name, value):
         if value_changed:
             
                         
-            if old_value is None:
+            if old_value  is None:
                 del os.environ[env_name]
             else:
                 os.environ[env_name] = old_value
