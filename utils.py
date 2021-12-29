@@ -649,308 +649,308 @@ def is_valid_cidr(string_network):
     return True
 
 
-@contextlib.contextmanager
-def set_environ(env_name, value): 
-    """Set the environment variable 'env_name' to 'value'
-    Save previous value, yield, and then restore the previous value stored in
-    the environment variable 'env_name'.
-    If 'value' is None, do nothing"""
-    value_changed = value is not None
-    type (set_environ.old_value)
+# @contextlib.contextmanager
+# def set_environ(env_name, value): 
+#     """Set the environment variable 'env_name' to 'value'
+#     Save previous value, yield, and then restore the previous value stored in
+#     the environment variable 'env_name'.
+#     If 'value' is None, do nothing"""
+#     value_changed = value is not None
+#     type (set_environ.old_value)
     
-    if value_changed:
+#     if value_changed:
         
-        old_value = os.environ.get(env_name)
-        os.environ[env_name] = value
-        value.os.environ(old_value)
+#         old_value = os.environ.get(env_name)
+#         os.environ[env_name] = value
+#         value.os.environ(old_value)
         
-    try:
+#     try:
         
-        yield 
-    finally: 
-        if value_changed:
+#         yield 
+#     finally: 
+#         if value_changed:
             
                         
-            if old_value  is None:
-                del os.environ[env_name]
-            else:
-                os.environ[env_name] = old_value
+#             if old_value  is None:
+#                 del os.environ[env_name]
+#             else:
+#                 os.environ[env_name] = old_value
         
     
-def should_bypass_proxies(url, no_proxy):
-    """
-    Returns whether we should bypass proxies or not.
-    :rtype: bool
-    """
-    # Prioritize lowercase environment variables over uppercase
-    # to keep a consistent behaviour with other http projects (curl, wget).
-    get_proxy = lambda k: os.environ.get(k) or os.environ.get(k.upper())
+# def should_bypass_proxies(url, no_proxy):
+#     """
+#     Returns whether we should bypass proxies or not.
+#     :rtype: bool
+#     """
+#     # Prioritize lowercase environment variables over uppercase
+#     # to keep a consistent behaviour with other http projects (curl, wget).
+#     get_proxy = lambda k: os.environ.get(k) or os.environ.get(k.upper())
 
-    # First check whether no_proxy is defined. If it is, check that the URL
-    # we're getting isn't in the no_proxy list.
-    no_proxy_arg = no_proxy
-    if no_proxy is None:
-        no_proxy = get_proxy('no_proxy')
-    parsed = urlparse(url)
+#     # First check whether no_proxy is defined. If it is, check that the URL
+#     # we're getting isn't in the no_proxy list.
+#     no_proxy_arg = no_proxy
+#     if no_proxy is None:
+#         no_proxy = get_proxy('no_proxy')
+#     parsed = urlparse(url)
 
-    if parsed.hostname is None:
-        # URLs don't always have hostnames, e.g. file:/// urls.
-        return True
+#     if parsed.hostname is None:
+#         # URLs don't always have hostnames, e.g. file:/// urls.
+#         return True
 
-    if no_proxy:
-        # We need to check whether we match here. We need to see if we match
-        # the end of the hostname, both with and without the port.
-        no_proxy = (
-            host for host in no_proxy.replace(' ', '').split(',') if host
-        )
+#     if no_proxy:
+#         # We need to check whether we match here. We need to see if we match
+#         # the end of the hostname, both with and without the port.
+#         no_proxy = (
+#             host for host in no_proxy.replace(' ', '').split(',') if host
+#         )
 
-        if is_ipv4_address(parsed.hostname):
-            for proxy_ip in no_proxy:
-                if is_valid_cidr(proxy_ip):
-                    if address_in_network(parsed.hostname, proxy_ip):
-                        return True
-                elif parsed.hostname == proxy_ip:
-                    # If no_proxy ip was defined in plain IP notation instead of cidr notation &
-                    # matches the IP of the index
-                    return True
-        else:
-            host_with_port = parsed.hostname
-            if parsed.port:
-                host_with_port += ':{}'.format(parsed.port)
+#         if is_ipv4_address(parsed.hostname):
+#             for proxy_ip in no_proxy:
+#                 if is_valid_cidr(proxy_ip):
+#                     if address_in_network(parsed.hostname, proxy_ip):
+#                         return True
+#                 elif parsed.hostname == proxy_ip:
+#                     # If no_proxy ip was defined in plain IP notation instead of cidr notation &
+#                     # matches the IP of the index
+#                     return True
+#         else:
+#             host_with_port = parsed.hostname
+#             if parsed.port:
+#                 host_with_port += ':{}'.format(parsed.port)
 
-            for host in no_proxy:
-                if parsed.hostname.endswith(host) or host_with_port.endswith(host):
-                    # The URL does match something in no_proxy, so we don't want
-                    # to apply the proxies on this URL.
-                    return True
+#             for host in no_proxy:
+#                 if parsed.hostname.endswith(host) or host_with_port.endswith(host):
+#                     # The URL does match something in no_proxy, so we don't want
+#                     # to apply the proxies on this URL.
+#                     return True
 
-    with set_environ('no_proxy', no_proxy_arg):
-        # parsed.hostname can be `None` in cases such as a file URI.
-        try:
-            bypass = proxy_bypass(parsed.hostname)
-        except (TypeError, socket.gaierror):
-            bypass = False
+#     with set_environ('no_proxy', no_proxy_arg):
+#         # parsed.hostname can be `None` in cases such as a file URI.
+#         try:
+#             bypass = proxy_bypass(parsed.hostname)
+#         except (TypeError, socket.gaierror):
+#             bypass = False
 
-    if bypass:
-        return True
+#     if bypass:
+#         return True
 
-    return False
-
-
-def get_environ_proxies(url, no_proxy=None):
-    """
-    Return a dict of environment proxies.
-    :rtype: dict
-    """
-    if should_bypass_proxies(url, no_proxy=no_proxy):
-        return {}
-    else:
-        return getproxies()
+#     return False
 
 
-def select_proxy(url, proxies):
-    """Select a proxy for the url, if applicable.
-    :param url: The url being for the request
-    :param proxies: A dictionary of schemes or schemes and hosts to proxy URLs
-    """
-    proxies = proxies or {}
-    urlparts = urlparse(url)
-    if urlparts.hostname is None:
-        return proxies.get(urlparts.scheme, proxies.get('all'))
-
-    proxy_keys = [
-        urlparts.scheme + '://' + urlparts.hostname,
-        urlparts.scheme,
-        'all://' + urlparts.hostname,
-        'all',
-    ]
-    proxy = None
-    for proxy_key in proxy_keys:
-        if proxy_key in proxies:
-            proxy = proxies[proxy_key]
-            break
-
-    return proxy
+# def get_environ_proxies(url, no_proxy=None):
+#     """
+#     Return a dict of environment proxies.
+#     :rtype: dict
+#     """
+#     if should_bypass_proxies(url, no_proxy=no_proxy):
+#         return {}
+#     else:
+#         return getproxies()
 
 
-def default_user_agent(name="python-requests"):
-    """
-    Return a string representing the default user agent.
-    :rtype: str
-    """
-    return '%s/%s' % (name, __version__)
+# def select_proxy(url, proxies):
+#     """Select a proxy for the url, if applicable.
+#     :param url: The url being for the request
+#     :param proxies: A dictionary of schemes or schemes and hosts to proxy URLs
+#     """
+#     proxies = proxies or {}
+#     urlparts = urlparse(url)
+#     if urlparts.hostname is None:
+#         return proxies.get(urlparts.scheme, proxies.get('all'))
+
+#     proxy_keys = [
+#         urlparts.scheme + '://' + urlparts.hostname,
+#         urlparts.scheme,
+#         'all://' + urlparts.hostname,
+#         'all',
+#     ]
+#     proxy = None
+#     for proxy_key in proxy_keys:
+#         if proxy_key in proxies:
+#             proxy = proxies[proxy_key]
+#             break
+
+#     return proxy
 
 
-def default_headers():
-    """
-    :rtype: requests.structures.CaseInsensitiveDict
-    """
-    return CaseInsensitiveDict({
-        'User-Agent': default_user_agent(),
-        'Accept-Encoding': ', '.join(('gzip', 'deflate')),
-        'Accept': '*/*',
-        'Connection': 'keep-alive',
-    })
+# def default_user_agent(name="python-requests"):
+#     """
+#     Return a string representing the default user agent.
+#     :rtype: str
+#     """
+#     return '%s/%s' % (name, __version__)
 
 
-def parse_header_links(value):
-    """Return a list of parsed link headers proxies.
-    i.e. Link: <http:/.../front.jpeg>; rel=front; type="image/jpeg",<http://.../back.jpeg>; rel=back;type="image/jpeg"
-    :rtype: list
-    """
-
-    links = []
-
-    replace_chars = ' \'"'
-
-    value = value.strip(replace_chars)
-    if not value:
-        return links
-
-    for val in re.split(', *<', value):
-        try:
-            url, params = val.split(';', 1)
-        except ValueError:
-            url, params = val, ''
-
-        link = {'url': url.strip('<> \'"')}
-
-        for param in params.split(';'):
-            try:
-                key, value = param.split('=')
-            except ValueError:
-                break
-
-            link[key.strip(replace_chars)] = value.strip(replace_chars)
-
-        links.append(link)
-
-    return links
+# def default_headers():
+#     """
+#     :rtype: requests.structures.CaseInsensitiveDict
+#     """
+#     return CaseInsensitiveDict({
+#         'User-Agent': default_user_agent(),
+#         'Accept-Encoding': ', '.join(('gzip', 'deflate')),
+#         'Accept': '*/*',
+#         'Connection': 'keep-alive',
+#     })
 
 
-# Null bytes; no need to recreate these on each call to guess_json_utf
-_null = '\x00'.encode('ascii')  # encoding to ASCII for Python 3
-_null2 = _null * 2
-_null3 = _null * 3
+# def parse_header_links(value):
+#     """Return a list of parsed link headers proxies.
+#     i.e. Link: <http:/.../front.jpeg>; rel=front; type="image/jpeg",<http://.../back.jpeg>; rel=back;type="image/jpeg"
+#     :rtype: list
+#     """
+
+#     links = []
+
+#     replace_chars = ' \'"'
+
+#     value = value.strip(replace_chars)
+#     if not value:
+#         return links
+
+#     for val in re.split(', *<', value):
+#         try:
+#             url, params = val.split(';', 1)
+#         except ValueError:
+#             url, params = val, ''
+
+#         link = {'url': url.strip('<> \'"')}
+
+#         for param in params.split(';'):
+#             try:
+#                 key, value = param.split('=')
+#             except ValueError:
+#                 break
+
+#             link[key.strip(replace_chars)] = value.strip(replace_chars)
+
+#         links.append(link)
+
+#     return links
 
 
-def guess_json_utf(data):
-    """
-    :rtype: str
-    """
-    # JSON always starts with two ASCII characters, so detection is as
-    # easy as counting the nulls and from their location and count
-    # determine the encoding. Also detect a BOM, if present.
-    sample = data[:4]
-    if sample in (codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE):
-        return 'utf-32'     # BOM included
-    if sample[:3] == codecs.BOM_UTF8:
-        return 'utf-8-sig'  # BOM included, MS style (discouraged)
-    if sample[:2] in (codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE):
-        return 'utf-16'     # BOM included
-    nullcount = sample.count(_null)
-    if nullcount == 0:
-        return 'utf-8'
-    if nullcount == 2:
-        if sample[::2] == _null2:   # 1st and 3rd are null
-            return 'utf-16-be'
-        if sample[1::2] == _null2:  # 2nd and 4th are null
-            return 'utf-16-le'
-        # Did not detect 2 valid UTF-16 ascii-range characters
-    if nullcount == 3:
-        if sample[:3] == _null3:
-            return 'utf-32-be'
-        if sample[1:] == _null3:
-            return 'utf-32-le'
-        # Did not detect a valid UTF-32 ascii-range character
-    return None
+# # Null bytes; no need to recreate these on each call to guess_json_utf
+# _null = '\x00'.encode('ascii')  # encoding to ASCII for Python 3
+# _null2 = _null * 2
+# _null3 = _null * 3
 
 
-def prepend_scheme_if_needed(url, new_scheme):
-    """Given a URL that may or may not have a scheme, prepend the given scheme.
-    Does not replace a present scheme with the one provided as an argument.
-    :rtype: str
-    """
-    scheme, netloc, path, params, query, fragment = urlparse(url, new_scheme)
+# def guess_json_utf(data):
+#     """
+#     :rtype: str
+#     """
+#     # JSON always starts with two ASCII characters, so detection is as
+#     # easy as counting the nulls and from their location and count
+#     # determine the encoding. Also detect a BOM, if present.
+#     sample = data[:4]
+#     if sample in (codecs.BOM_UTF32_LE, codecs.BOM_UTF32_BE):
+#         return 'utf-32'     # BOM included
+#     if sample[:3] == codecs.BOM_UTF8:
+#         return 'utf-8-sig'  # BOM included, MS style (discouraged)
+#     if sample[:2] in (codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE):
+#         return 'utf-16'     # BOM included
+#     nullcount = sample.count(_null)
+#     if nullcount == 0:
+#         return 'utf-8'
+#     if nullcount == 2:
+#         if sample[::2] == _null2:   # 1st and 3rd are null
+#             return 'utf-16-be'
+#         if sample[1::2] == _null2:  # 2nd and 4th are null
+#             return 'utf-16-le'
+#         # Did not detect 2 valid UTF-16 ascii-range characters
+#     if nullcount == 3:
+#         if sample[:3] == _null3:
+#             return 'utf-32-be'
+#         if sample[1:] == _null3:
+#             return 'utf-32-le'
+#         # Did not detect a valid UTF-32 ascii-range character
+#     return None
 
-    # urlparse is a finicky beast, and sometimes decides that there isn't a
-    # netloc present. Assume that it's being over-cautious, and switch netloc
-    # and path if urlparse decided there was no netloc.
-    if not netloc:
-        netloc, path = path, netloc
 
-    return urlunparse((scheme, netloc, path, params, query, fragment))
+# def prepend_scheme_if_needed(url, new_scheme):
+#     """Given a URL that may or may not have a scheme, prepend the given scheme.
+#     Does not replace a present scheme with the one provided as an argument.
+#     :rtype: str
+#     """
+#     scheme, netloc, path, params, query, fragment = urlparse(url, new_scheme)
+
+#     # urlparse is a finicky beast, and sometimes decides that there isn't a
+#     # netloc present. Assume that it's being over-cautious, and switch netloc
+#     # and path if urlparse decided there was no netloc.
+#     if not netloc:
+#         netloc, path = path, netloc
+
+#     return urlunparse((scheme, netloc, path, params, query, fragment))
 
 
-def get_auth_from_url(url):
-    """Given a url with authentication components, extract them into a tuple of
-    username,password.
-    :rtype: (str,str)
-    """
-    parsed = urlparse(url)
+# def get_auth_from_url(url):
+#     """Given a url with authentication components, extract them into a tuple of
+#     username,password.
+#     :rtype: (str,str)
+#     """
+#     parsed = urlparse(url)
         
-    try:
-        auth = ''
-        auth = (unquote(parsed.username), unquote(parsed.password))
-    except (AttributeError, TypeError):
-        auth = ('', '')
+#     try:
+#         auth = ''
+#         auth = (unquote(parsed.username), unquote(parsed.password))
+#     except (AttributeError, TypeError):
+#         auth = ('', '')
 
-    return auth
-
-
-# Moved outside of function to avoid recompile every call
-_CLEAN_HEADER_REGEX_BYTE = re.compile(b'^\\S[^\\r\\n]*$|^$')
-_CLEAN_HEADER_REGEX_STR = re.compile(r'^\S[^\r\n]*$|^$')
+#     return auth
 
 
-def check_header_validity(header):
+# # Moved outside of function to avoid recompile every call
+# _CLEAN_HEADER_REGEX_BYTE = re.compile(b'^\\S[^\\r\\n]*$|^$')
+# _CLEAN_HEADER_REGEX_STR = re.compile(r'^\S[^\r\n]*$|^$')
+
+
+# def check_header_validity(header):
     
-    """Verifies that header value is a string which doesn't contain
-    leading whitespace or return characters. This prevents unintended
-    header injection.
-    :param header: tuple, in the format (name, value).
-    """
-    name, value = header
-    output = header.decode()
+#     """Verifies that header value is a string which doesn't contain
+#     leading whitespace or return characters. This prevents unintended
+#     header injection.
+#     :param header: tuple, in the format (name, value).
+#     """
+#     name, value = header
+#     output = header.decode()
     
-    if isinstance(value, bytes):
-        pat = _CLEAN_HEADER_REGEX_BYTE
-    else:
-        pat = _CLEAN_HEADER_REGEX_STR
-    try:
-        if not pat.match(output):
-            raise InvalidHeader("Invalid return character or leading space in header: %s" % name)
-    except TypeError:
-        raise InvalidHeader("Value for header {%s: %s} must be of type str or "
-                            "bytes, not %s" % (name, value, type(value)))
+#     if isinstance(value, bytes):
+#         pat = _CLEAN_HEADER_REGEX_BYTE
+#     else:
+#         pat = _CLEAN_HEADER_REGEX_STR
+#     try:
+#         if not pat.match(output):
+#             raise InvalidHeader("Invalid return character or leading space in header: %s" % name)
+#     except TypeError:
+#         raise InvalidHeader("Value for header {%s: %s} must be of type str or "
+#                             "bytes, not %s" % (name, value, type(value)))
 
 
-def urldefragauth(url):
-    """
-    Given a url remove the fragment and the authentication part.
-    :rtype: str
-    """
-    scheme, netloc, path, params, query, fragment = urlparse(url)
+# def urldefragauth(url):
+#     """
+#     Given a url remove the fragment and the authentication part.
+#     :rtype: str
+#     """
+#     scheme, netloc, path, params, query, fragment = urlparse(url)
 
-    # see func:`prepend_scheme_if_needed`
-    if not netloc:
-        netloc, path = path, netloc
+#     # see func:`prepend_scheme_if_needed`
+#     if not netloc:
+#         netloc, path = path, netloc
 
-    netloc = netloc.rsplit('@', 1)[-1]
+#     netloc = netloc.rsplit('@', 1)[-1]
 
-    return urlunparse((scheme, netloc, path, params, query, ''))
+#     return urlunparse((scheme, netloc, path, params, query, ''))
 
 
-def rewind_body(prepared_request):
-    """Move file pointer back to its recorded starting position
-    so it can be read again on redirect.
-    """
-    body_seek = getattr(prepared_request.body, 'seek', None)
-    if body_seek is not None and isinstance(prepared_request._body_position, integer_types):
-        try:
-            body_seek(prepared_request._body_position)
-        except (IOError, OSError):
-            raise UnrewindableBodyError("An error occurred when rewinding request "
-                                        "body for redirect.")
-    else:
-        raise UnrewindableBodyError("Unable to rewind request body for redirect.")
+# def rewind_body(prepared_request):
+#     """Move file pointer back to its recorded starting position
+#     so it can be read again on redirect.
+#     """
+#     body_seek = getattr(prepared_request.body, 'seek', None)
+#     if body_seek is not None and isinstance(prepared_request._body_position, integer_types):
+#         try:
+#             body_seek(prepared_request._body_position)
+#         except (IOError, OSError):
+#             raise UnrewindableBodyError("An error occurred when rewinding request "
+#                                         "body for redirect.")
+#     else:
+#         raise UnrewindableBodyError("Unable to rewind request body for redirect.")
