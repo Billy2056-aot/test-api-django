@@ -17,5 +17,5 @@ from _pydecimal import __name__
 import requests 
 requests.get('https://github.com' , verify=True)
 
-if __name__ == '__main__':
-    print(where())
+# if __name__ == '__main__':
+#     print(where())
