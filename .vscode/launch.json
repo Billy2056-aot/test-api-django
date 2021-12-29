@@ -6,14 +6,14 @@
     {
       "type": "aws-sam",
       "request": "direct-invoke",
-      "name": "test-api-django:utils.set_environ (python3.8)",
+      "name": "test-api-django:utils.set_environ (python3.9)",
       "invokeTarget": {
         "target": "code",
         "projectRoot": "${workspaceFolder}/",
         "lambdaHandler": "utils.set_environ"
       },
       "lambda": {
-        "runtime": "python3.8",
+        "runtime": "python3.9",
         "payload": {},
         "environmentVariables": {}
       }
