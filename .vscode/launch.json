@@ -7,9 +7,6 @@
       "name": "Docker: Attach to Node",
       "remoteRoot": "/usr/src/app"
     },
-    
-    
-
     {
       "type": "aws-sam",
       "request": "direct-invoke",
@@ -366,10 +363,21 @@
       "program": "${file}",
       "console": "externalTerminal"
     },
+   
     {
-      
-    }   
-  
-
+      "name": "Docker: Python - Django",
+      "type": "docker",
+      "request": "launch",
+      "preLaunchTask": "docker-run: debug",
+      "python": {
+        "pathMappings": [
+          {
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/app"
+          }
+        ],
+        "projectType": "django"
+      }
+    }
   ]
 }
