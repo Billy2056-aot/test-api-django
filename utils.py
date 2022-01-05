@@ -9,7 +9,7 @@ from decimal import Decimal
 import certs
 import codecs
 import contextlib
- 
+
 import io
 from json import encoder
 import os
